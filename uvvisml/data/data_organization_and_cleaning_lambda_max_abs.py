@@ -51,10 +51,11 @@ chemfluor_df
 
 data_location = os.path.join(DATA_DIR, 'dsscdb')
 xlsx_files = [x for x in os.listdir(data_location) if x.endswith('.xlsx')]
-dsscdb_df = pd.DataFrame()
+dsscdb_dfs = []
 for file in xlsx_files:
     file_location = os.path.join(data_location, file)
-    dsscdb_df = dsscdb_df.append(pd.read_excel(file_location), ignore_index=True, sort=True)
+    dsscdb_dfs.append(pd.read_excel(file_location))
+dsscdb_df = pd.concat(dsscdb_dfs, ignore_index=True, sort=True)
 
 dsscdb_df.rename(columns={'SMILES':'smiles','SOLVENT':'solvent','ABSORPTION_MAXIMA':'peakwavs_max'}, inplace=True)
 dsscdb_df = dsscdb_df[['smiles','solvent','peakwavs_max']].copy()
@@ -268,7 +269,7 @@ df
 # In[14]:
 
 
-cluster_idx = df[df['smiles'].str.contains('\.')].index
+cluster_idx = df[df['smiles'].str.contains(r'\.')].index
 #print('Removing {} rows'.format(len(cluster_idx)))
 df.drop(index=cluster_idx, inplace=True)
 df
